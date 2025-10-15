@@ -10,15 +10,6 @@ import "moment/locale/en-gb";
 moment.locale("en");
 const localizer = momentLocalizer(moment);
 
-
-// export default function SchedulePopupWrapper(props) {
-//   return (
-//     <GoogleOAuthProvider clientId="481068362595-2mlatnj42p9gg1gj0a9k01e8ri2jkjcq.apps.googleusercontent.com">
-//       <SchedulePopup {...props} />
-//     </GoogleOAuthProvider>
-//   );
-// }
-
 export default function CalendarAssistant() {
   const [events, setEvents] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -44,7 +35,6 @@ export default function CalendarAssistant() {
     const userMsg = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
 
-    // Gửi câu hỏi tới model Dobby
     const res = await fetch("https://api.fireworks.ai/inference/v1/chat/completions", {
       method: "POST",
       headers: {
