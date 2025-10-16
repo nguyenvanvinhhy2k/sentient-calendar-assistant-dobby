@@ -374,8 +374,8 @@ const handleEdit = (item) => {
 
     emailjs
       .send(
-        "service_22k0xfz", // 🔧 ID dịch vụ trong EmailJS
-        "template_d7qxefc", // 🔧 ID template
+        process.env.NEXT_PUBLIC_ID_SERVICE, // 🔧 ID dịch vụ trong EmailJS
+        process.env.NEXT_PUBLIC_ID_TEMPLATE, // 🔧 ID template
         {
           to_email: user.email,
           subject: `🔔 Reminder: ${event.title}`,
@@ -383,7 +383,7 @@ const handleEdit = (item) => {
             "HH:mm - DD/MM/YYYY"
           )}.\n\nBest regards,\nAppointment Assistant Dobby`,
         },
-        "GpykQkpMrz0V-t9h0" // 🔧 Public Key trong EmailJS
+        process.env.NEXT_PUBLIC_PUBLIC_KEY // 🔧 Public Key trong EmailJS
       )
       .then(
         () => showToast(`📧 Schedule reminder email sent ${user.email}`),
