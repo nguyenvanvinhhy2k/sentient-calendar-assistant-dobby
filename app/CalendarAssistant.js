@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
@@ -15,11 +16,10 @@ export default function CalendarAssistant() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [showPopupEdit, setShowPopupEdit] = useState(false);
   const [toast, setToast] = useState(null);
   const [editingEvent, setEditingEvent] = useState(null);
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("googleUser")) || null
-  );
+  const [user, setUser] = useState(null);
 
 
   const [form, setForm] = useState({
@@ -106,8 +106,8 @@ Trường id được thêm mặc định vào mỗi object trong events và là
 {
   "action": "add",
   "events": [
-    { "id": "3fsd2","title": "họp với Minh", "start": "2025-10-08T14:00:00", "end": "2025-10-08T14:30:00" },
-    { "id": "f3fsd","title": "họp với Hùng", "start": "2025-10-09T14:00:00", "end": "2025-10-09T14:30:00" }
+    { "id": "3fsd2","title": "họp với Minh", "start": "2025-10-08T14:00:00", "end": "2025-10-08T15:00:00" },
+    { "id": "f3fsd","title": "họp với Hùng", "start": "2025-10-09T14:00:00", "end": "2025-10-09T15:00:00" }
   ]
 }
 
@@ -117,8 +117,8 @@ Trường id được thêm mặc định vào mỗi object trong events và là
 {
   "action": "add",
   "events": [
-    { "id": "sd32","title": "Meeting", "start": "2025-10-08T14:00:00", "end": "2025-10-08T14:30:00" },
-    { "id": "fsd3","title": "Coffee break với Hùng", "start": "2025-10-09T14:00:00", "end": "2025-10-09T14:30:00" }
+    { "id": "sd32","title": "Meeting", "start": "2025-10-08T14:00:00", "end": "2025-10-08T15:00:00" },
+    { "id": "fsd3","title": "Coffee break với Hùng", "start": "2025-10-09T14:00:00", "end": "2025-10-09T15:0:00" }
   ]
 }
 
@@ -211,54 +211,53 @@ Trường id được thêm mặc định vào mỗi object trong events và là
     setInput("");
   };
 
-  function handleBotAction(botResponse) {
-    console.log('bot', botResponse)
-    const { action, events } = botResponse;
+  // function handleBotAction(botResponse) {
+  //   console.log('bot', botResponse)
+  //   const { action, events } = botResponse;
 
-    // 🔹 Thêm sự kiện
-    if (action === "add") {
-      setEvents(prev => [...prev, ...events]);
-    }
 
-    // 🔹 Xoá sự kiện
-    if (action === "delete") {
-      setEvents(prev =>
-        prev.filter(ev =>
-          botResponse.every(delEv => {
-            const sameTitle = ev.title !== delEv.title;
-            const sameStart =
-              new Date(ev.start).getTime() !== new Date(delEv.start).getTime();
-            return sameTitle || sameStart; // giữ lại những cái KHÔNG trùng
-          })
-        )
-      );
-    }
+  //   if (action === "add") {
+  //     setEvents(prev => [...prev, ...events]);
+  //   }
 
-    // 🔹 Cập nhật sự kiện
-    if (action === "update") {
-      setEvents(prev =>
-        prev.map(ev => {
-          const old = botResponse.old;
-          if (
-            ev.title === old.title &&
-            new Date(ev.start).getTime() === new Date(old.start).getTime()
-          ) {
-            return {
-              ...botResponse.new,
-              start: new Date(botResponse.new.start),
-              end: new Date(botResponse.new.end),
-            };
-          }
-          return ev;
-        })
-      );
-    }
+  //   if (action === "delete") {
+  //     setEvents(prev =>
+  //       prev.filter(ev =>
+  //         botResponse.every(delEv => {
+  //           const sameTitle = ev.title !== delEv.title;
+  //           const sameStart =
+  //             new Date(ev.start).getTime() !== new Date(delEv.start).getTime();
+  //           return sameTitle || sameStart;
+  //         })
+  //       )
+  //     );
+  //   }
 
-    // 🔹 Xem danh sách
-    if (action === "list") {
-      console.log("📅 Current events:", events);
-    }
-  }
+  //   // 🔹 Cập nhật sự kiện
+  //   if (action === "update") {
+  //     setEvents(prev =>
+  //       prev.map(ev => {
+  //         const old = botResponse.old;
+  //         if (
+  //           ev.title === old.title &&
+  //           new Date(ev.start).getTime() === new Date(old.start).getTime()
+  //         ) {
+  //           return {
+  //             ...botResponse.new,
+  //             start: new Date(botResponse.new.start),
+  //             end: new Date(botResponse.new.end),
+  //           };
+  //         }
+  //         return ev;
+  //       })
+  //     );
+  //   }
+
+  //   // 🔹 Xem danh sách
+  //   if (action === "list") {
+  //     console.log("📅 Current events:", events);
+  //   }
+  // }
 
 
   function convertBotEvents(botEvents) {
@@ -299,12 +298,6 @@ Trường id được thêm mặc định vào mỗi object trong events và là
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("calendarEvents", JSON.stringify(events));
-  }, [events]);
-
-
-
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(null), 2500);
@@ -313,13 +306,25 @@ Trường id được thêm mặc định vào mỗi object trong events và là
 
  // Khi chọn vùng thời gian trống
  const handleSelectSlot = ({ start, end }) => {
-  setForm({ title: "", start, end, notify: false });
+  setForm({ id: "", title: "", start, end, notify: false });
   setEditingIndex(null);
   setShowManager(true);
 };
 
   // Thêm hoặc cập nhật sự kiện
-  const handleSave = () => {
+  const handleSaveAdd = () => {
+    if (!form.title.trim()) {
+      showToast("⚠️ Please enter an appointment title");
+      return;
+    }
+
+    const newEvent = { ...form, id: Date.now() };
+    setEvents((prev) => [...prev, newEvent]);
+    showToast("✅ Appointment schedule added");
+    setForm({ title: "", start: "", end: "", notify: false });
+  };
+
+  const handleSaveEdit = () => {
     if (!form.title.trim()) {
       showToast("⚠️ Please enter an appointment title");
       return;
@@ -328,14 +333,12 @@ Trường id được thêm mặc định vào mỗi object trong events và là
       setEvents((prev) =>
         prev.map((ev) => (ev.id === editingEvent.id ? { ...form, id: ev.id } : ev))
       );
+      setEditingEvent(null);
+      setShowPopupEdit(false)
+      setForm({ title: "", start: "", end: "", notify: false });
+      setEditingEvent(null);
       showToast("✅ Updated appointment schedule");
-    } else {
-      const newEvent = { ...form, id: Date.now() };
-      setEvents((prev) => [...prev, newEvent]);
-      showToast("✅ Appointment schedule added");
     }
-    setEditingEvent(null);
-    setForm({ title: "", start: "", end: "", notify: false });
   };
 
   // Xoá sự kiện
@@ -345,16 +348,20 @@ Trường id được thêm mặc định vào mỗi object trong events và là
   };
 
 // Sửa bằng index
-const handleEdit = (index) => {
-  setEditingIndex(index);
-  setForm(events[index]);
+const handleEdit = (item) => {
+  setEditingEvent(item);
+  setForm({
+    title: item.title,
+    start: moment(item.start).format("YYYY-MM-DDTHH:mm"),
+    end: moment(item.end).format("YYYY-MM-DDTHH:mm"),
+    notify: item.notify,
+  });
+  setShowPopupEdit(true)
 };
 
   const handlePopup = () => {
     setShowPopup(true)
   }
-
-
 
   const handleLogout = () => {
     localStorage.removeItem("googleUser");
@@ -401,6 +408,17 @@ const handleEdit = (index) => {
       showToast(`🔕 Notifications turned off for: ${updated[index].title}`);
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("calendarEvents", JSON.stringify(events));
+  }, [events]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedUser = localStorage.getItem("googleUser");
+      if (savedUser) setUser(JSON.parse(savedUser));
+    }
+  }, []);
 
   return (
 <div className="flex h-screen bg-gray-50 font-sans flex-col sm:flex-row">
@@ -550,27 +568,24 @@ const handleEdit = (index) => {
        <input
          type="text"
          placeholder="Appointment title"
-         value={form.title}
          onChange={(e) => setForm({ ...form, title: e.target.value })}
          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
        />
  
        <input
          type="datetime-local"
-         value={form.start}
          onChange={(e) => setForm({ ...form, start: e.target.value })}
          className="border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
        />
  
        <input
          type="datetime-local"
-         value={form.end}
          onChange={(e) => setForm({ ...form, end: e.target.value })}
          className="border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
        />
  
        <button
-         onClick={handleSave}
+         onClick={handleSaveAdd}
          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:scale-95 transition"
        >
          {editingEvent ? "💾 Update" : "➕ Add"}
@@ -643,6 +658,64 @@ const handleEdit = (index) => {
  
       )}
 
+{showPopupEdit && (
+  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[999] animate-fadeIn">
+    <div className="relative w-[50%] max-w-2xl bg-gradient-to-br from-blue-950/70 via-indigo-900/60 to-purple-900/70 border border-white/20 rounded-2xl shadow-2xl text-white p-6 animate-scaleIn">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <h3 className="text-xl font-semibold tracking-wide">
+          Edit Appointment
+        </h3>
+        <button
+          onClick={() => setShowPopupEdit(false)}
+          className="text-white/70 hover:text-white text-2xl leading-none"
+        >
+          ×
+        </button>
+      </div>
+
+      {/* Form */}
+      <div className="grid grid-cols-2 gap-4 mb-5">
+        <input
+          type="text"
+          placeholder="Event title"
+          value={form.title}
+          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          className="col-span-2 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <input
+          type="datetime-local"
+          value={form.start}
+          onChange={(e) => setForm({ ...form, start: e.target.value })}
+          className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <input
+          type="datetime-local"
+          value={form.end}
+          onChange={(e) => setForm({ ...form, end: e.target.value })}
+          className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+      </div>
+
+
+        <button
+          onClick={handleSaveEdit}
+          className={`px-5 py-2 rounded-lg font-semibold tracking-wide transition-all duration-300 shadow-md ${
+            editingEvent
+              ? "bg-gradient-to-r from-yellow-400 to-orange-500 hover:scale-105"
+              : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:scale-105"
+          }`}
+        >
+          Update
+        </button>
+
+      {/* Decorative glow */}
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-indigo-500/10 via-purple-500/10 to-transparent pointer-events-none blur-2xl"></div>
+    </div>
+  </div>
+)}
+
+
       {/* Toast thông báo */}
       {toast && (
         <div className="fixed bottom-5 right-5 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-md text-sm animate-fadeIn z-[999]">
@@ -653,10 +726,3 @@ const handleEdit = (index) => {
   );
 }
 
-function safeParse(text) {
-  try {
-    const match = text.match(/\{.*\}/s);
-    if (match) return JSON.parse(match[0]);
-  } catch { }
-  return null;
-}
