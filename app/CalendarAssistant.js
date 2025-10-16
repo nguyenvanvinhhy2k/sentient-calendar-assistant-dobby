@@ -75,7 +75,7 @@ Nếu không nói rõ tháng → mặc định tháng **10**.
 ### Quy tắc xử lý "title":
 
 1. Nếu người dùng nói hành động “Đặt lịch”, “Tạo lịch”, “Đặt họp”, “Lên lịch”, “Cuộc họp”, "Xoá", "Huỷ", "Thay đổi", "Cập nhật" →  
-   ➤ Chỉ giữ lại phần ý chính của tiêu đề (ví dụ:  
+   ➤ Chỉ giữ lại phần ý chính của tiêu đề, cụ thể là danh từ trong câu (ví dụ:  
    - “Đặt họp với Minh” → "họp với Minh"
    - “Tạo lịch hẹn với Hùng” → "hẹn với Hùng")
 
@@ -369,21 +369,21 @@ const handleEdit = (item) => {
   };
 
   const sendEmailNotification = (event) => {
-    console.log('event', event)
+    console.log('event', event, user.email)
     if (!user) return;
 
     emailjs
       .send(
-        "YOUR_SERVICE_ID", // 🔧 ID dịch vụ trong EmailJS
-        "YOUR_TEMPLATE_ID", // 🔧 ID template
+        "service_22k0xfz", // 🔧 ID dịch vụ trong EmailJS
+        "template_d7qxefc", // 🔧 ID template
         {
           to_email: user.email,
-          subject: `🔔 Nhắc lịch: ${event.title}`,
-          message: `Xin chào ${user.name},\n\nĐây là nhắc lịch cho sự kiện "${event.title}" vào ${moment(event.start).format(
+          subject: `🔔 Reminder: ${event.title}`,
+          message: `Hello ${user.name},\n\nThis is a reminder for your event "${event.title}" at ${moment(event.start).format(
             "HH:mm - DD/MM/YYYY"
-          )}.\n\nTrân trọng,\nLịch Hẹn Assistant`,
+          )}.\n\nBest regards,\nAppointment Assistant Dobby`,
         },
-        "YOUR_PUBLIC_KEY" // 🔧 Public Key trong EmailJS
+        "GpykQkpMrz0V-t9h0" // 🔧 Public Key trong EmailJS
       )
       .then(
         () => showToast(`📧 Schedule reminder email sent ${user.email}`),
@@ -615,7 +615,7 @@ const handleEdit = (item) => {
                  </td>
                  <td className="text-gray-600">
                    {moment(ev.start).format("DD/MM HH:mm")} –{" "}
-                   {moment(ev.end).format("HH:mm")}
+                   {moment(ev.end).format("DD/MM HH:mm")}
                  </td>
                  <button
                   onClick={() => handleToggleNotify(index)}
