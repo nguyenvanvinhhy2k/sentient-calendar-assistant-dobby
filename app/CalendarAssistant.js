@@ -38,7 +38,7 @@ export default function CalendarAssistant() {
     const res = await fetch("https://api.fireworks.ai/inference/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${"fw_3ZdEMhhREugdZQaTRL2TRkGD"}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREWORKS_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
