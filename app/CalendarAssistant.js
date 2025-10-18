@@ -314,19 +314,19 @@ Trường id được thêm mặc định vào mỗi object trong events và là
   // Thêm hoặc cập nhật sự kiện
   const handleSaveAdd = () => {
     if (!form.title.trim()) {
-      showToast("⚠️ Please enter an appointment title");
+      showToast("⚠️ Please enter an calendar title");
       return;
     }
 
     const newEvent = { ...form, id: Date.now() };
     setEvents((prev) => [...prev, newEvent]);
-    showToast("✅ Appointment schedule added");
+    showToast("✅ Calendar schedule added");
     setForm({ title: "", start: "", end: "", notify: false });
   };
 
   const handleSaveEdit = () => {
     if (!form.title.trim()) {
-      showToast("⚠️ Please enter an appointment title");
+      showToast("⚠️ Please enter an calendar title");
       return;
     }
     if (editingEvent) {
@@ -337,14 +337,14 @@ Trường id được thêm mặc định vào mỗi object trong events và là
       setShowPopupEdit(false)
       setForm({ title: "", start: "", end: "", notify: false });
       setEditingEvent(null);
-      showToast("✅ Updated appointment schedule");
+      showToast("✅ Updated Calendar schedule");
     }
   };
 
   // Xoá sự kiện
   const handleDelete = (id) => {
     setEvents((prev) => prev.filter((e) => e.id !== id));
-    showToast("🗑️ Appointment deleted");
+    showToast("🗑️ Calendar deleted");
   };
 
 // Sửa bằng index
@@ -381,7 +381,7 @@ const handleEdit = (item) => {
           subject: `🔔 Reminder: ${event.title}`,
           message: `Hello ${user.name},\n\nThis is a reminder for your event "${event.title}" at ${moment(event.start).format(
             "HH:mm - DD/MM/YYYY"
-          )}.\n\nBest regards,\nAppointment Assistant Dobby`,
+          )}.\n\nBest regards,\nDobby Calendar Assistant `,
         },
         process.env.NEXT_PUBLIC_PUBLIC_KEY // 🔧 Public Key trong EmailJS
       )
@@ -516,7 +516,7 @@ const handleEdit = (item) => {
       <div className="absolute bottom-full right-[10px] mb-2 w-[480px] text-sm text-gray-700 bg-white border border-gray-200 rounded-lg shadow-lg p-3 opacity-0 group-hover:opacity-100 pointer-events-none transition">
   <div className="font-semibold mb-1">💡 Instruct:</div>
   <div className="space-y-1">
-    <div> You can add, cancel, and manage appointments by sending requests to Dobby Calendar Assistant.</div>
+    <div> You can add, cancel, and manage calendar by sending requests to Dobby Calendar Assistant.</div>
     <div> For example: Schedule a trip on the 12th at 8am and shopping on the 14th from 3pm to 5pm.</div>
     <div> Example: Cancel Shopping on the 14th</div>
     <div> Click on any appointment to manage it</div>
@@ -549,7 +549,7 @@ const handleEdit = (item) => {
      {/* Header */}
      <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-700">
-            📅 Manage appointment schedules
+            📅 Manage Calendar
           </h2>
           <div className="flex items-center gap-3">
             {user ? (
@@ -585,7 +585,7 @@ const handleEdit = (item) => {
 
             <button
               onClick={() => setShowPopup(false)}
-              className="text-gray-500 hover:text-gray-800 text-xl transition"
+              className="text-gray-500 hover:text-gray-800 text-xl transition ml-[10px]"
             >
               ✕
             </button>
@@ -646,6 +646,7 @@ const handleEdit = (item) => {
                    {moment(ev.start).format("DD/MM HH:mm")} –{" "}
                    {moment(ev.end).format("DD/MM HH:mm")}
                  </td>
+                 <td>
                  <button
                   onClick={() => handleToggleNotify(index)}
                   className={`px-3 py-1 rounded-lg text-sm font-medium ${
@@ -656,6 +657,7 @@ const handleEdit = (item) => {
                 >
                   {ev.notify ? "🔔 On" : "🚫 Off"}
                 </button>
+                </td>
                  <td className="text-right space-x-3 pr-2">
                    <button
                      onClick={() => handleEdit(ev)}
