@@ -449,7 +449,7 @@ const handleEdit = (item) => {
       className="w-10 h-10 rounded-full"
     />
     <div>
-      <h2 className="text-lg font-semibold text-blue-700">Appointment booking Dobby</h2>
+      <h2 className="text-lg font-semibold text-blue-700">Dobby Calendar Assistant</h2>
       <p className="text-sm text-gray-600">Always ready to help you manage your schedule</p>
     </div>
   </div>
@@ -488,20 +488,47 @@ const handleEdit = (item) => {
   </div>
 
   {/* 📝 Ô nhập tin nhắn */}
-  <div className="p-3 border-t border-gray-200 flex items-end gap-2">
-    <textarea
-      value={input}
-      onChange={(e) => setInput(e.target.value)}
-      placeholder="Enter a message..."
-      rows={2}
-      className="flex-1 resize-none px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          handleSend();
-        }
-      }}
-    />
+  <div className="py-2 px-3 border-t border-gray-200 flex items-end gap-2 relative">
+  {/* Textarea nhập tin nhắn */}
+  <textarea
+    value={input}
+    onChange={(e) => setInput(e.target.value)}
+    placeholder="Enter a message..."
+    rows={2}
+    className="flex-1 resize-none px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    }}
+  />
+
+  {/* Nút Send + Hướng dẫn */}
+  <div className="flex flex-col items-center gap-1 relative">
+    {/* Nút Hướng dẫn */}
+    <div className="group relative">
+      <button className="p-1 text-gray-500 hover:text-blue-600">
+        ❔
+      </button>
+
+      {/* Tooltip hướng dẫn */}
+      <div className="absolute bottom-full right-[10px] mb-2 w-[480px] text-sm text-gray-700 bg-white border border-gray-200 rounded-lg shadow-lg p-3 opacity-0 group-hover:opacity-100 pointer-events-none transition">
+  <div className="font-semibold mb-1">💡 Instruct:</div>
+  <div className="space-y-1">
+    <div> You can add, cancel, and manage appointments by sending requests to Dobby Calendar Assistant.</div>
+    <div> For example: Schedule a trip on the 12th at 8am and shopping on the 14th from 3pm to 5pm.</div>
+    <div> Example: Cancel Shopping on the 14th</div>
+    <div> Click on any appointment to manage it</div>
+    <div> If <b>year</b> is not specified → default year <b>2025</b>.</div>
+    <div> If <b>month</b> is not specified → default month <b>10</b>.</div>
+    <div> If <b>duration</b> is not specified → default event duration is <b>60 minutes</b>.</div>
+    <div> If <b>hour</b> is not specified → default hour <b>12</b>.</div>
+  </div>
+</div>
+    </div>
+
+    {/* Nút Send */}
     <button
       onClick={handleSend}
       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -509,6 +536,8 @@ const handleEdit = (item) => {
       Send
     </button>
   </div>
+</div>
+
 </div>
 
 
