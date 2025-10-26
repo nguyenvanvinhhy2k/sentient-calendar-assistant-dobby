@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import emailjs from "emailjs-com";
+// import emailjs from "emailjs-com";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "moment/locale/en-gb"; 
