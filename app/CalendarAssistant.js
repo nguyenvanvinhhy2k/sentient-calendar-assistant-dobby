@@ -368,27 +368,27 @@ const handleEdit = (item) => {
     setUser(null);
   };
 
-  const sendEmailNotification = (event) => {
+  const sendEmailNotification = async (event) => {
     console.log('event', event, user.email)
     if (!user) return;
 
-    emailjs
-      .send(
-        process.env.NEXT_PUBLIC_ID_SERVICE, // 🔧 ID dịch vụ trong EmailJS
-        process.env.NEXT_PUBLIC_ID_TEMPLATE, // 🔧 ID template
-        {
-          to_email: user.email,
-          subject: `🔔 Reminder: ${event.title}`,
-          message: `Hello ${user.name},\n\nThis is a reminder for your event "${event.title}" at ${moment(event.start).format(
-            "HH:mm - DD/MM/YYYY"
-          )}.\n\nBest regards,\nDobby Calendar Assistant `,
-        },
-        process.env.NEXT_PUBLIC_PUBLIC_KEY // 🔧 Public Key trong EmailJS
-      )
-      .then(
-        () => showToast(`📧 Schedule reminder email sent ${user.email}`),
-        (err) => console.error("EmailJS error:", err)
-      );
+    try {
+      await fetch("https://hook.eu2.make.com/tudnmw9igsl1titf15ggr4fyox4ozp5b", { // URL của bạn
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event_id: event.id,
+          event_title: event.title,
+          event_start: moment(event.start).format("YYYY-MM-DDTHH:mm:ssZ"), // ISO format
+          user_email: user.email,
+          user_name: user.name,
+        }),
+      });
+      showToast(`📅 Reminder for "${event.title}" scheduled!`);
+    } catch (err) {
+      console.error(err);
+      showToast("⚠️ Failed to schedule reminder.");
+    }
   };
 
   const handleToggleNotify = (index) => {
